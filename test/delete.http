@@ -1,0 +1,2 @@
+DELETE http://localhost:3000/data?contentId=doc-2
+Content-Type: application/json

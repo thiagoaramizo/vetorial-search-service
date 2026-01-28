@@ -78,7 +78,7 @@ describe('DataController (e2e)', () => {
           data: ['Texto sobre busca vetorial', 'Outro texto sobre MCP'],
         })
         .expect(201)
-        .expect({ success: true });
+        .expect({ message: 'Data registered successfully' });
     });
 
     it('should fail with invalid payload', async () => {
@@ -119,12 +119,12 @@ describe('DataController (e2e)', () => {
         })
         .expect(200);
 
-      expect(response.body.result).toBeDefined();
-      expect(response.body.result).toHaveLength(1);
-      expect(response.body.result[0].projectId).toBe('e2e-project');
+      expect(response.body.results).toBeDefined();
+      expect(response.body.results).toHaveLength(1);
+      expect(response.body.results[0].projectId).toBe('e2e-project');
       // Since our mock embedding puts 'vetorial' in index 0 for both query and doc,
       // they should match.
-      expect(response.body.result[0].data).toContain(
+      expect(response.body.results[0].data).toContain(
         'Texto sobre busca vetorial',
       );
     });
@@ -148,9 +148,56 @@ describe('DataController (e2e)', () => {
         })
         .expect(200);
 
-      const projects = response.body.result.map((r: any) => r.projectId);
+      const projects = response.body.results.map((r: any) => r.projectId);
       expect(projects).toContain('e2e-project');
       expect(projects).not.toContain('other-project');
     });
+  });
+
+  it('/data (GET) should list data filtering by projectId', async () => {
+    // 1. Register data
+    await request(app.getHttpServer())
+      .post('/data/register')
+      .send({
+        projectId: 'list_proj',
+        contentId: 'list_content',
+        data: ['list me'],
+      })
+      .expect(201);
+
+    // 2. List data
+    const response = await request(app.getHttpServer())
+      .get('/data')
+      .query({ projectId: 'list_proj' })
+      .expect(200);
+
+    expect(response.body.count).toBe(1);
+    expect(response.body.data[0].content).toBe('list me');
+  });
+
+  it('/data (DELETE) should remove data by projectId', async () => {
+    // 1. Register data
+    await request(app.getHttpServer())
+      .post('/data/register')
+      .send({
+        projectId: 'del_proj',
+        contentId: 'del_content',
+        data: ['delete me'],
+      })
+      .expect(201);
+
+    // 2. Remove data
+    await request(app.getHttpServer())
+      .delete('/data')
+      .query({ projectId: 'del_proj' })
+      .expect(200);
+
+    // 3. Verify removal
+    const response = await request(app.getHttpServer())
+      .get('/data')
+      .query({ projectId: 'del_proj' })
+      .expect(200);
+
+    expect(response.body.count).toBe(0);
   });
 });

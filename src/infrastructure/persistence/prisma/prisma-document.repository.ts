@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
@@ -23,7 +25,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
       const embeddingString = `[${doc.embedding.join(',')}]`;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+
       await this.prisma.$executeRaw`
         INSERT INTO documents (id, project_id, content_id, content, embedding)
         VALUES (${doc.id}::uuid, ${doc.projectId}, ${doc.contentId}, ${doc.content}, ${embeddingString}::vector)
@@ -37,13 +39,61 @@ export class PrismaDocumentRepository implements DocumentRepository {
   ): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await this.prisma.document.deleteMany({
       where: {
         projectId,
         contentId,
       },
     });
+  }
+
+  async deleteMany(projectId?: string, contentId?: string): Promise<void> {
+    if (!projectId && !contentId) {
+      throw new Error(
+        'At least one filter (projectId or contentId) is required for deletion',
+      );
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    await this.prisma.document.deleteMany({
+      where: {
+        ...(projectId && { projectId }),
+        ...(contentId && { contentId }),
+      },
+    });
+  }
+
+  async findAll(projectId?: string, contentId?: string): Promise<Document[]> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const docs = await this.prisma.document.findMany({
+      where: {
+        ...(projectId && { projectId }),
+        ...(contentId && { contentId }),
+      },
+      select: {
+        id: true,
+        projectId: true,
+        contentId: true,
+        content: true,
+        // embedding: false // Not selecting embedding to save bandwidth
+      },
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return docs.map(
+      (doc: any) =>
+        new Document(
+          doc.id,
+
+          doc.projectId,
+
+          doc.contentId,
+
+          doc.content,
+          [],
+        ),
+    );
   }
 
   async search(
@@ -59,7 +109,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
+
     const results = await this.prisma.$queryRaw<any[]>`
       SELECT id, project_id as "projectId", content_id as "contentId", content
       FROM documents
@@ -72,7 +122,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
 
     // Map back to Domain Entity
     // Note: We are not returning the embedding from DB to save bandwidth/parsing as it's not strictly needed for the result
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return results.map(
       (r) =>
         new Document(

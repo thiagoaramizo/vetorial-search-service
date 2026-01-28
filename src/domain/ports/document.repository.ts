@@ -6,6 +6,8 @@ export interface DocumentRepository {
     projectId: string,
     contentId: string,
   ): Promise<void>;
+  deleteMany(projectId?: string, contentId?: string): Promise<void>;
+  findAll(projectId?: string, contentId?: string): Promise<Document[]>;
   search(
     queryEmbedding: number[],
     projectId?: string,

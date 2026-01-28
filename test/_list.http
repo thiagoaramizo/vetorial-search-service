@@ -1,0 +1,2 @@
+GET http://localhost:3000/data
+Content-Type: application/json

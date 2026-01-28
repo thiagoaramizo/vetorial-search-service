@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DataController } from './interface/http/controllers/data.controller';
 import { RegisterDataUseCase } from './application/use-cases/register-data.use-case';
 import { SearchDataUseCase } from './application/use-cases/search-data.use-case';
+import { ListDataUseCase } from './application/use-cases/list-data.use-case';
+import { RemoveDataUseCase } from './application/use-cases/remove-data.use-case';
 import { PrismaService } from './infrastructure/persistence/prisma/prisma.service';
 import { PrismaDocumentRepository } from './infrastructure/persistence/prisma/prisma-document.repository';
 import { DocumentRepository } from './domain/ports/document.repository';
@@ -19,6 +21,8 @@ import { MockEmbeddingAdapter } from './infrastructure/adapters/mock-embedding.a
     PrismaService,
     RegisterDataUseCase,
     SearchDataUseCase,
+    ListDataUseCase,
+    RemoveDataUseCase,
     {
       provide: DocumentRepository,
       useClass: PrismaDocumentRepository,
