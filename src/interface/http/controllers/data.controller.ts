@@ -8,6 +8,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RegisterDataUseCase } from '../../../application/use-cases/register-data.use-case';
 import { SearchDataUseCase } from '../../../application/use-cases/search-data.use-case';
 import { ListDataUseCase } from '../../../application/use-cases/list-data.use-case';
@@ -17,6 +18,7 @@ import { SearchDataDto } from '../dtos/search-data.dto';
 import { ListDataDto } from '../dtos/list-data.dto';
 import { RemoveDataDto } from '../dtos/remove-data.dto';
 
+@ApiTags('data')
 @Controller('data')
 export class DataController {
   constructor(
@@ -27,6 +29,8 @@ export class DataController {
   ) {}
 
   @Post('register')
+  @ApiOperation({ summary: 'Register or update data for semantic search' })
+  @ApiResponse({ status: 201, description: 'Data registered successfully.' })
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() dto: RegisterDataDto) {
     await this.registerDataUseCase.execute(
@@ -38,6 +42,8 @@ export class DataController {
   }
 
   @Post('search')
+  @ApiOperation({ summary: 'Search for relevant data using vector embeddings' })
+  @ApiResponse({ status: 200, description: 'Returns relevant documents.' })
   @HttpCode(HttpStatus.OK)
   async search(@Body() dto: SearchDataDto) {
     const results = await this.searchDataUseCase.execute(
@@ -50,6 +56,8 @@ export class DataController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'List stored documents with optional filtering' })
+  @ApiResponse({ status: 200, description: 'Returns a list of documents.' })
   @HttpCode(HttpStatus.OK)
   async list(@Query() query: ListDataDto) {
     const documents = await this.listDataUseCase.execute(
@@ -72,6 +80,8 @@ export class DataController {
   }
 
   @Delete()
+  @ApiOperation({ summary: 'Remove data by project or content ID' })
+  @ApiResponse({ status: 200, description: 'Data removed successfully.' })
   @HttpCode(HttpStatus.OK)
   async remove(@Query() query: RemoveDataDto) {
     await this.removeDataUseCase.execute(query.projectId, query.contentId);
