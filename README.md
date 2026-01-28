@@ -37,7 +37,7 @@ The project follows **Clean Architecture** and **Hexagonal Architecture**:
 
    **Supported Adapters (`EMBEDDING_PROVIDER`):**
    - `openai`: Requires `OPENAI_API_KEY` (Model: `text-embedding-3-small`) (Recommended)
-   - `gemini`: Requires `GOOGLE_GENAI_API_KEY` (Model: `text-embedding-004`)
+   - `gemini`: Requires `GOOGLE_GENAI_API_KEY` (Model: `gemini-embedding-001`)
    - `claude`: Requires `ANTHROPIC_API_KEY` and `VOYAGE_API_KEY` (Model: `voyage-large-2`).
   
   **Security Configuration:**

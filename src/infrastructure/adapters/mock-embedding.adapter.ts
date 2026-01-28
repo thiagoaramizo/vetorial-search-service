@@ -7,7 +7,7 @@ export class MockEmbeddingAdapter implements EmbeddingProvider {
     return Promise.resolve(
       texts.map((text) => {
         // Create a vector of size 1536 (OpenAI compatible)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
         const vector: number[] = new Array(1536).fill(0);
 
         // Simple deterministic logic for testing similarity

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { DocumentRepository } from '../../../domain/ports/document.repository';
@@ -80,7 +76,6 @@ export class PrismaDocumentRepository implements DocumentRepository {
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return docs.map(
       (doc: any) =>
         new Document(
@@ -104,7 +99,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
   ): Promise<{ projectId: string; contentId: string; count: number }[]> {
     const skip = (page - 1) * limit;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/ban-ts-comment
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const groups = await this.prisma.document.groupBy({
       by: ['projectId', 'contentId'],
@@ -120,13 +115,11 @@ export class PrismaDocumentRepository implements DocumentRepository {
       orderBy: [{ projectId: 'asc' }, { contentId: 'asc' }],
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     return groups.map((g: any) => ({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       projectId: g.projectId,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+
       contentId: g.contentId,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+
       count: g._count.id,
     }));
   }
@@ -157,7 +150,7 @@ export class PrismaDocumentRepository implements DocumentRepository {
 
     // Map back to Domain Entity
     // Note: We are not returning the embedding from DB to save bandwidth/parsing as it's not strictly needed for the result
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
     return results.map(
       (r) =>
         new Document(
