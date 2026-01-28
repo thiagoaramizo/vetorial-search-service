@@ -42,15 +42,14 @@ export class ClaudeEmbeddingAdapter implements EmbeddingProvider {
       throw new Error(`Voyage AI API error: ${response.statusText}`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data: any = await response.json();
     // Voyage returns data sorted by index, but let's map carefully if needed.
     // The structure is { data: [{ embedding: [...], index: 0 }, ...] }
 
     // Sort by index to ensure order matches input
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+
     const sortedData = data.data.sort((a: any, b: any) => a.index - b.index);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+
     return sortedData.map((item: any) => item.embedding);
   }
 }
