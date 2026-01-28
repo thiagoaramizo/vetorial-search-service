@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { DataController } from './interface/http/controllers/data.controller';
 import { RegisterDataUseCase } from './application/use-cases/register-data.use-case';
 import { SearchDataUseCase } from './application/use-cases/search-data.use-case';
@@ -15,9 +17,21 @@ import { ClaudeEmbeddingAdapter } from './infrastructure/adapters/claude-embeddi
 import { MockEmbeddingAdapter } from './infrastructure/adapters/mock-embedding.adapter';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true })],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
+  ],
   controllers: [DataController],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     PrismaService,
     RegisterDataUseCase,
     SearchDataUseCase,

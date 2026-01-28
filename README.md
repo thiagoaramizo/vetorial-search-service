@@ -9,6 +9,7 @@ Backend API for data registration and semantic search, acting as an MCP (Model C
 - **PostgreSQL + pgvector** (Vector Database)
 - **Prisma** (ORM)
 - **OpenAI / Gemini / Claude (Voyage AI)** (Interchangeable Embedding Adapters)
+- **Helmet + Throttler** (Security headers and Rate Limiting)
 
 ## Architecture
 
@@ -38,6 +39,9 @@ The project follows **Clean Architecture** and **Hexagonal Architecture**:
    - `openai`: Requires `OPENAI_API_KEY` (Model: `text-embedding-3-small`) (Recommended)
    - `gemini`: Requires `GOOGLE_GENAI_API_KEY` (Model: `text-embedding-004`)
    - `claude`: Requires `ANTHROPIC_API_KEY` and `VOYAGE_API_KEY` (Model: `voyage-large-2`).
+  
+  **Security Configuration:**
+  - `MAX_CONTENT_ITEMS`: Maximum number of items allowed in the `data` array (Default: 100).
 
 ### 2. Database with Docker
 
@@ -169,6 +173,16 @@ Removes data filtering by project or content ID. At least one filter is required
   "message": "Data removed successfully"
 }
 ```
+
+## Security Features
+
+- **Input Validation**: Strict DTO validation with `class-validator` (whitelist enabled).
+- **Rate Limiting**: Global rate limiting (100 requests/minute) using `@nestjs/throttler`.
+- **HTTP Headers**: Secure HTTP headers via `helmet`.
+- **CORS**: Enabled with default settings.
+- **SQL Injection Protection**: Uses Prisma's parameterized queries and raw SQL template literals for vector operations.
+- **Payload Limits**: Configurable limit for input array size (`MAX_CONTENT_ITEMS`).
+
 
 ## Tests
 

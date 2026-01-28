@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
@@ -88,6 +83,18 @@ describe('DataController (e2e)', () => {
           projectId: '', // Invalid
           contentId: 'doc-1',
           data: [], // Empty
+        })
+        .expect(400);
+    });
+
+    it('should fail when data exceeds max items limit', async () => {
+      const hugeData = new Array(101).fill('text'); // Default limit is 100
+      return request(app.getHttpServer())
+        .post('/data/register')
+        .send({
+          projectId: 'e2e-project',
+          contentId: 'doc-huge',
+          data: hugeData,
         })
         .expect(400);
     });

@@ -1,4 +1,10 @@
-import { IsArray, IsNotEmpty, IsString, ArrayMinSize } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsString,
+  ArrayMinSize,
+  ArrayMaxSize,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDataDto {
@@ -25,5 +31,6 @@ export class RegisterDataDto {
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
+  @ArrayMaxSize(Number(process.env.MAX_CONTENT_ITEMS) || 100)
   data: string[];
 }
