@@ -21,6 +21,8 @@ O projeto segue **Clean Architecture** e **Hexagonal Architecture**:
 
 ## Configuração
 
+### 1. Instalação e Ambiente
+
 1. Instale as dependências:
    ```bash
    npm install
@@ -35,21 +37,33 @@ O projeto segue **Clean Architecture** e **Hexagonal Architecture**:
    **Adapters Suportados (`EMBEDDING_PROVIDER`):**
    - `openai`: Requer `OPENAI_API_KEY` (Modelo: `text-embedding-3-small`)
    - `gemini`: Requer `GOOGLE_GENAI_API_KEY` (Modelo: `text-embedding-004`)
-   - `claude`: Requer `ANTHROPIC_API_KEY` (Modelo: `voyage-2`). *Nota: A Anthropic recomenda Voyage AI para embeddings.*
+   - `claude`: Requer `VOYAGE_API_KEY` (Modelo: `voyage-large-2`).
 
-3. Banco de Dados:
-   Certifique-se de ter um PostgreSQL com a extensão `vector` habilitada.
-   Execute o script SQL em `migration.sql` ou use as migrations do Prisma (configuração necessária no `prisma/schema.prisma` se desejar automatizar).
+### 2. Banco de Dados com Docker
 
-   ```bash
-   # Exemplo manual no psql
-   psql -d vectordb -f migration.sql
-   ```
+Você pode subir o banco de dados PostgreSQL com a extensão pgvector usando Docker Compose:
 
-4. Inicie a aplicação:
-   ```bash
-   npm run start:dev
-   ```
+```bash
+docker-compose up -d
+```
+
+Isso iniciará o banco na porta `5432`. As credenciais padrão estão no `docker-compose.yml`.
+
+### 3. Execução
+
+Para iniciar a aplicação em modo de desenvolvimento:
+
+```bash
+npm run start:dev
+```
+
+A aplicação estará disponível em `http://localhost:3000`.
+
+### 4. Documentação Swagger
+
+A documentação interativa da API (Swagger UI) está disponível em:
+
+**`http://localhost:3000/api`**
 
 ## API Endpoints
 
@@ -71,6 +85,13 @@ Registra dados para um projeto e ID de conteúdo. Substitui dados existentes (id
 }
 ```
 
+**Response (201):**
+```json
+{
+  "message": "Data registered successfully"
+}
+```
+
 ### 2. Buscar Dados
 
 **POST** `/data/search`
@@ -86,10 +107,10 @@ Busca semântica nos dados registrados.
 }
 ```
 
-**Response:**
+**Response (200):**
 ```json
 {
-  "result": [
+  "results": [
     {
       "projectId": "projeto-alpha",
       "contentId": "doc-123",
@@ -99,6 +120,66 @@ Busca semântica nos dados registrados.
     }
   ]
 }
+```
+
+### 3. Listar Dados (Agrupado)
+
+**GET** `/data`
+
+Lista os dados armazenados, agrupados por projeto e conteúdo, retornando a contagem de itens. Suporta paginação.
+
+**Query Params:**
+- `projectId` (opcional): Filtrar por projeto.
+- `contentId` (opcional): Filtrar por ID de conteúdo.
+- `page` (padrão: 1): Número da página.
+- `limit` (padrão: 10): Itens por página.
+
+**Response (200):**
+```json
+{
+  "results": [
+    {
+      "projectId": "projeto-alpha",
+      "contents": [
+        {
+          "contentId": "doc-123",
+          "items": 2
+        }
+      ]
+    }
+  ],
+  "page": 1,
+  "limit": 10
+}
+```
+
+### 4. Remover Dados
+
+**DELETE** `/data`
+
+Remove dados filtrando por projeto ou ID de conteúdo. Pelo menos um filtro é obrigatório.
+
+**Query Params:**
+- `projectId`: ID do projeto.
+- `contentId`: ID do conteúdo.
+
+**Response (200):**
+```json
+{
+  "message": "Data removed successfully"
+}
+```
+
+## Testes
+
+### Testes E2E
+```bash
+npm run test:e2e
+```
+
+### Testes Unitários
+```bash
+npm run test
 ```
 
 ## Estrutura de Pastas
