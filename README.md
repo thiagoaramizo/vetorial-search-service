@@ -48,12 +48,20 @@ The project follows **Clean Architecture** and **Hexagonal Architecture**:
 You can start the PostgreSQL database with pgvector extension using Docker Compose:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 This will start the database on port `5432`. Default credentials are in `docker-compose.yml`.
 
-### 3. Execution
+### 3. Database Migration
+
+Run the Prisma migrations to create the database schema:
+
+```bash
+npx prisma migrate dev
+```
+
+### 4. Execution
 
 To start the application in development mode:
 
@@ -63,7 +71,7 @@ npm run start:dev
 
 The application will be available at `http://localhost:3000`.
 
-### 4. Swagger Documentation
+### 5. Swagger Documentation
 
 Interactive API documentation (Swagger UI) is available at:
 

@@ -14,7 +14,7 @@ model Document {
   projectId String                 @map("project_id")
   contentId String                 @map("content_id")
   content   String
-  embedding Unsupported("vector")?
+  embedding Unsupported("vector(1536)")?
 
   @@map("documents")
 }
