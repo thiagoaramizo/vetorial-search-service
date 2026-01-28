@@ -171,8 +171,12 @@ describe('DataController (e2e)', () => {
       .query({ projectId: 'list_proj' })
       .expect(200);
 
-    expect(response.body.count).toBe(1);
-    expect(response.body.data[0].content).toBe('list me');
+    expect(response.body.results).toBeDefined();
+    expect(response.body.results.length).toBeGreaterThan(0);
+
+    expect(response.body.results[0].projectId).toBe('list_proj');
+
+    expect(response.body.results[0].contents[0].contentId).toBe('list_content');
   });
 
   it('/data (DELETE) should remove data by projectId', async () => {
@@ -198,6 +202,6 @@ describe('DataController (e2e)', () => {
       .query({ projectId: 'del_proj' })
       .expect(200);
 
-    expect(response.body.count).toBe(0);
+    expect(response.body.results).toHaveLength(0);
   });
 });

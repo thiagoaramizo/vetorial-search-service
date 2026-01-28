@@ -96,6 +96,41 @@ export class PrismaDocumentRepository implements DocumentRepository {
     );
   }
 
+  async listGrouped(
+    page: number,
+    limit: number,
+    projectId?: string,
+    contentId?: string,
+  ): Promise<{ projectId: string; contentId: string; count: number }[]> {
+    const skip = (page - 1) * limit;
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const groups = await this.prisma.document.groupBy({
+      by: ['projectId', 'contentId'],
+      _count: {
+        id: true,
+      },
+      where: {
+        ...(projectId && { projectId }),
+        ...(contentId && { contentId }),
+      },
+      skip,
+      take: limit,
+      orderBy: [{ projectId: 'asc' }, { contentId: 'asc' }],
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    return groups.map((g: any) => ({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      projectId: g.projectId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      contentId: g.contentId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      count: g._count.id,
+    }));
+  }
+
   async search(
     queryEmbedding: number[],
     projectId?: string,

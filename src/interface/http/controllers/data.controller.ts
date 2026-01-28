@@ -60,22 +60,17 @@ export class DataController {
   @ApiResponse({ status: 200, description: 'Returns a list of documents.' })
   @HttpCode(HttpStatus.OK)
   async list(@Query() query: ListDataDto) {
-    const documents = await this.listDataUseCase.execute(
+    const results = await this.listDataUseCase.execute(
+      query.page,
+      query.limit,
       query.projectId,
       query.contentId,
     );
-    // Grouping similar to search or just returning flat list?
-    // User requirement: "listar (filtros projectId, contentId)"
-    // Let's group by default for consistency with search structure, or just flat.
-    // Flat is simpler for "list".
+
     return {
-      count: documents.length,
-      data: documents.map((doc) => ({
-        id: doc.id,
-        projectId: doc.projectId,
-        contentId: doc.contentId,
-        content: doc.content,
-      })),
+      results,
+      page: query.page,
+      limit: query.limit,
     };
   }
 
