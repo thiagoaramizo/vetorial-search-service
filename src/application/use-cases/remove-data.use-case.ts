@@ -10,7 +10,9 @@ export class RemoveDataUseCase {
 
   async execute(projectId?: string, contentId?: string): Promise<void> {
     if (!projectId && !contentId) {
-      throw new Error('You must provide at least one filter (projectId or contentId) to remove data.');
+      throw new Error(
+        'You must provide at least one filter (projectId or contentId) to remove data.',
+      );
     }
     await this.documentRepository.deleteMany(projectId, contentId);
   }
