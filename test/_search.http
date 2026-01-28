@@ -1,0 +1,8 @@
+POST http://localhost:3000/data/search
+Content-Type: application/json
+
+{
+    "projectId": "open-api-1",
+    "limit": 5,
+    "search": "servidor caiu"
+}

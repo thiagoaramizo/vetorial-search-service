@@ -1,0 +1,24 @@
+POST http://localhost:3000/data/register
+Content-Type: application/json
+
+{
+    "projectId": "open-api-1",
+    "contentId": "doc-2",
+    "data": [
+        "O plano falhou com precisão matemática.",
+        "A mensagem foi enviada, mas nunca compreendida.",
+        "O sistema parecia consciente do prazo.",
+        "A solução simples foi descartada por orgulho.",
+        "O erro se escondia no detalhe óbvio.",
+        "A madrugada trouxe mais clareza que a reunião.",
+        "O código antigo funcionava melhor que o novo.",
+        "A decisão foi rápida, a consequência nem tanto.",
+        "O backup existia apenas na teoria.",
+        "A interface sorria enquanto tudo quebrava.",
+        "O prazo mudou sem avisar ninguém.",
+        "A lógica estava certa, o mundo não.",
+        "O teste passou por acidente.",
+        "O silêncio do servidor era preocupante.",
+        "A ideia foi boa demais para ser usada."
+    ]
+}
