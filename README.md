@@ -1,86 +1,86 @@
-# Vetorial Search Service (MCP Provider)
+# Vector Search Service (MCP Provider)
 
-API Backend para registro e busca semântica de dados, atuando como um provedor de contexto MCP (Model Context Protocol).
+Backend API for data registration and semantic search, acting as an MCP (Model Context Protocol) context provider.
 
-## Stack Tecnológica
+## Tech Stack
 
 - **Node.js + TypeScript** (Strict mode)
-- **NestJS** (Framework HTTP e Injeção de Dependência)
-- **PostgreSQL + pgvector** (Banco de dados vetorial)
+- **NestJS** (HTTP Framework and Dependency Injection)
+- **PostgreSQL + pgvector** (Vector Database)
 - **Prisma** (ORM)
-- **OpenAI / Gemini / Claude (Voyage AI)** (Adapters de Embeddings Intercambiáveis)
+- **OpenAI / Gemini / Claude (Voyage AI)** (Interchangeable Embedding Adapters)
 
-## Arquitetura
+## Architecture
 
-O projeto segue **Clean Architecture** e **Hexagonal Architecture**:
+The project follows **Clean Architecture** and **Hexagonal Architecture**:
 
-- **Domain**: Entidades e Interfaces (Ports) agnósticas a framework.
-- **Application**: Casos de uso (Use Cases) contendo as regras de negócio.
-- **Infrastructure**: Implementações concretas (Prisma, Adapters de IA).
-- **Interface**: Controladores HTTP (REST).
+- **Domain**: Framework-agnostic Entities and Interfaces (Ports).
+- **Application**: Use Cases containing business rules.
+- **Infrastructure**: Concrete implementations (Prisma, AI Adapters).
+- **Interface**: HTTP Controllers (REST).
 
-## Configuração
+## Configuration
 
-### 1. Instalação e Ambiente
+### 1. Installation and Environment
 
-1. Instale as dependências:
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Configure as variáveis de ambiente:
-   Copie `.env.example` para `.env` e preencha as chaves.
+2. Configure environment variables:
+   Copy `.env.example` to `.env` and fill in the keys.
    ```bash
    cp .env.example .env
    ```
 
-   **Adapters Suportados (`EMBEDDING_PROVIDER`):**
-   - `openai`: Requer `OPENAI_API_KEY` (Modelo: `text-embedding-3-small`)
-   - `gemini`: Requer `GOOGLE_GENAI_API_KEY` (Modelo: `text-embedding-004`)
-   - `claude`: Requer `VOYAGE_API_KEY` (Modelo: `voyage-large-2`).
+   **Supported Adapters (`EMBEDDING_PROVIDER`):**
+   - `openai`: Requires `OPENAI_API_KEY` (Model: `text-embedding-3-small`) (Recommended)
+   - `gemini`: Requires `GOOGLE_GENAI_API_KEY` (Model: `text-embedding-004`)
+   - `claude`: Requires `ANTHROPIC_API_KEY` and `VOYAGE_API_KEY` (Model: `voyage-large-2`).
 
-### 2. Banco de Dados com Docker
+### 2. Database with Docker
 
-Você pode subir o banco de dados PostgreSQL com a extensão pgvector usando Docker Compose:
+You can start the PostgreSQL database with pgvector extension using Docker Compose:
 
 ```bash
 docker-compose up -d
 ```
 
-Isso iniciará o banco na porta `5432`. As credenciais padrão estão no `docker-compose.yml`.
+This will start the database on port `5432`. Default credentials are in `docker-compose.yml`.
 
-### 3. Execução
+### 3. Execution
 
-Para iniciar a aplicação em modo de desenvolvimento:
+To start the application in development mode:
 
 ```bash
 npm run start:dev
 ```
 
-A aplicação estará disponível em `http://localhost:3000`.
+The application will be available at `http://localhost:3000`.
 
-### 4. Documentação Swagger
+### 4. Swagger Documentation
 
-A documentação interativa da API (Swagger UI) está disponível em:
+Interactive API documentation (Swagger UI) is available at:
 
 **`http://localhost:3000/api`**
 
 ## API Endpoints
 
-### 1. Registrar Dados (Upsert)
+### 1. Register Data (Upsert)
 
 **POST** `/data/register`
 
-Registra dados para um projeto e ID de conteúdo. Substitui dados existentes (idempotente).
+Registers data for a project and content ID. Replaces existing data (idempotent).
 
 **Payload:**
 ```json
 {
-  "projectId": "projeto-alpha",
+  "projectId": "project-alpha",
   "contentId": "doc-123",
   "data": [
-    "O MCP permite conectar IAs a dados externos.",
-    "Busca vetorial usa embeddings para similaridade."
+    "MCP allows connecting AIs to external data.",
+    "Vector search uses embeddings for similarity."
   ]
 }
 ```
@@ -92,17 +92,17 @@ Registra dados para um projeto e ID de conteúdo. Substitui dados existentes (id
 }
 ```
 
-### 2. Buscar Dados
+### 2. Search Data
 
 **POST** `/data/search`
 
-Busca semântica nos dados registrados.
+Semantic search on registered data.
 
 **Payload:**
 ```json
 {
-  "search": "como funciona busca vetorial?",
-  "projectId": "projeto-alpha",
+  "search": "how does vector search work?",
+  "projectId": "project-alpha",
   "limit": 3
 }
 ```
@@ -112,34 +112,34 @@ Busca semântica nos dados registrados.
 {
   "results": [
     {
-      "projectId": "projeto-alpha",
+      "projectId": "project-alpha",
       "contentId": "doc-123",
       "data": [
-        "Busca vetorial usa embeddings para similaridade."
+        "Vector search uses embeddings for similarity."
       ]
     }
   ]
 }
 ```
 
-### 3. Listar Dados (Agrupado)
+### 3. List Data (Grouped)
 
 **GET** `/data`
 
-Lista os dados armazenados, agrupados por projeto e conteúdo, retornando a contagem de itens. Suporta paginação.
+Lists stored data, grouped by project and content, returning item counts. Supports pagination.
 
 **Query Params:**
-- `projectId` (opcional): Filtrar por projeto.
-- `contentId` (opcional): Filtrar por ID de conteúdo.
-- `page` (padrão: 1): Número da página.
-- `limit` (padrão: 10): Itens por página.
+- `projectId` (optional): Filter by project.
+- `contentId` (optional): Filter by content ID.
+- `page` (default: 1): Page number.
+- `limit` (default: 10): Items per page.
 
 **Response (200):**
 ```json
 {
   "results": [
     {
-      "projectId": "projeto-alpha",
+      "projectId": "project-alpha",
       "contents": [
         {
           "contentId": "doc-123",
@@ -153,15 +153,15 @@ Lista os dados armazenados, agrupados por projeto e conteúdo, retornando a cont
 }
 ```
 
-### 4. Remover Dados
+### 4. Remove Data
 
 **DELETE** `/data`
 
-Remove dados filtrando por projeto ou ID de conteúdo. Pelo menos um filtro é obrigatório.
+Removes data filtering by project or content ID. At least one filter is required.
 
 **Query Params:**
-- `projectId`: ID do projeto.
-- `contentId`: ID do conteúdo.
+- `projectId`: Project ID.
+- `contentId`: Content ID.
 
 **Response (200):**
 ```json
@@ -170,25 +170,25 @@ Remove dados filtrando por projeto ou ID de conteúdo. Pelo menos um filtro é o
 }
 ```
 
-## Testes
+## Tests
 
-### Testes E2E
+### E2E Tests
 ```bash
 npm run test:e2e
 ```
 
-### Testes Unitários
+### Unit Tests
 ```bash
 npm run test
 ```
 
-## Estrutura de Pastas
+## Folder Structure
 
 ```
 src/
-├── application/       # Regras de Negócio (Use Cases)
-├── domain/            # Entidades e Interfaces
-├── infrastructure/    # Implementações (DB, Adapters)
-├── interface/         # Controllers e DTOs
+├── application/       # Business Rules (Use Cases)
+├── domain/            # Entities and Interfaces
+├── infrastructure/    # Implementations (DB, Adapters)
+├── interface/         # Controllers and DTOs
 └── main.ts            # Entrypoint
 ```
